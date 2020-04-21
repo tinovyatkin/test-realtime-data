@@ -13,14 +13,10 @@
       "pattern": "^\\w+$"
     },
     "createdAt": {
-      "bsonType": "date",
-      "format": "date-time",
-      "instanceOf": "Date"
+      "bsonType": "date"
     },
     "updatedAt": {
-      "bsonType": "date",
-      "format": "date-time",
-      "instanceOf": "Date"
+      "bsonType": "date"
     },
     "parameters": {
       "type": "array",
@@ -28,7 +24,7 @@
       "maxItems": 20,
       "additionalItems": false,
       "items": {
-        "bsonType": "decimal",
+        "bsonType": "number",
         "minimum": -1,
         "maximum": 1
       }

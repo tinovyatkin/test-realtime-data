@@ -10,6 +10,7 @@ const Redis = require("ioredis");
 const { MongoClient } = require("mongodb");
 
 const MONGO_COLLECTION_NAME = "entities";
+exports.MONGO_COLLECTION_NAME = MONGO_COLLECTION_NAME; // for tests
 
 /**
  * Connects to MongoDB
@@ -30,12 +31,7 @@ async function connectToMongo(
     }
   }
 
-  // Create id index, making review ID unique
-  await db
-    .collection(MONGO_COLLECTION_NAME)
-    .createIndex({ id: -1 }, { unique: true });
-
-  // set JSON schema
+  // create collection and set JSON schema
   await db.createCollection(MONGO_COLLECTION_NAME, {
     validator: {
       $jsonSchema: require("../schemas/mongo-entities.json"),
@@ -43,8 +39,14 @@ async function connectToMongo(
     validationLevel: "strict",
   });
 
+  // Create id index, making review ID unique
+  await db
+    .collection(MONGO_COLLECTION_NAME)
+    .createIndex({ id: -1 }, { unique: true });
+
   return db;
 }
+exports.connectToMongo = connectToMongo;
 
 async function subscribeToRedis(
   url = process.env.REDIS_URL || "redis://localhost:6379"
@@ -97,5 +99,6 @@ async function start() {
     onEntity(entity, serializedParameters, db)
   );
 }
+exports.start = start;
 
 if (!module.parent) start();
