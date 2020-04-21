@@ -6,7 +6,9 @@
   "scripts": {
     "test": "jest",
     "run:frontend": "http-server ./frontend -o",
-    "run:stub": "node ./data-stub/"
+    "run:stub": "node ./data-stub",
+    "run:sub": "node ./data-subscriber",
+    "run:pub-sub": "run-p run:stub run:sub"
   },
   "repository": {
     "type": "git",
