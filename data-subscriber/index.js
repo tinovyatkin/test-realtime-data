@@ -9,15 +9,15 @@
 const Redis = require("ioredis");
 const { MongoClient } = require("mongodb");
 
-const MONGO_COLLECTION_NAME = "entities";
-exports.MONGO_COLLECTION_NAME = MONGO_COLLECTION_NAME; // for tests
+const { MONGO_COLLECTION_NAME } = require("../constants");
 
 /**
  * Connects to MongoDB
  * @param {string} [url]
  */
 async function connectToMongo(
-  url = process.env.MONGOHQ_URL || "mongodb://localhost/transfers-do"
+  url = process.env.MONGOHQ_URL ||
+    "mongodb+srv://tino:6VUFWcLLhLaVDeTs@cluster0-sszzh.azure.mongodb.net/test-entities?retryWrites=true&w=majority"
 ) {
   const mongo = await MongoClient.connect(url, { useUnifiedTopology: true });
   const db = mongo.db();

@@ -1,4 +1,5 @@
-const { MONGO_COLLECTION_NAME, connectToMongo, start } = require("./index");
+const { connectToMongo, start } = require("./index");
+const { MONGO_COLLECTION_NAME } = require("../constants");
 const { Db } = require("mongodb");
 const Redis = require("ioredis");
 
