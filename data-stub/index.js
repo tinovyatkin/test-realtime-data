@@ -16,19 +16,27 @@
 const faker = require("faker");
 const Redis = require("ioredis");
 
+// generate our entities names, 20 as per task description
+const ENTITIES = (exports.ENTITIES = Array.from({ length: 20 }, () =>
+  faker.lorem.word()
+));
+
+function generateRandomEntity() {
+  const entity = faker.random.arrayElement(ENTITIES);
+  const parameters = Array.from({ length: 20 }, () =>
+    faker.random.number({ min: -1, max: 1, precision: 0.0001 })
+  );
+  return { entity, parameters };
+}
+exports.generateRandomEntity = generateRandomEntity; // for tests
+
 async function fakeDataPublisher() {
   // connecting to Redis server as publisher
   const redis = new Redis(process.env.REDIS_URL || "redis://localhost:6379");
 
-  // generate our entities names, 20 as per task description
-  const ENTITIES = Array.from({ length: 20 }, () => faker.lorem.word());
-
   // start generating and publishing data
   for (;;) {
-    const entity = faker.random.arrayElement(ENTITIES);
-    const parameters = Array.from({ length: 20 }, () =>
-      faker.random.number({ min: -1, max: 1, precision: 0.0001 })
-    );
+    const { entity, parameters } = generateRandomEntity();
 
     // publish it to redis
     await redis.publish(entity, parameters.map((p) => p.toFixed(4)).join(","));
@@ -41,4 +49,4 @@ async function fakeDataPublisher() {
   }
 }
 
-fakeDataPublisher();
+if (!module.parent) fakeDataPublisher();

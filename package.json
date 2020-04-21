@@ -4,7 +4,7 @@
   "description": "[TEST] realtime data display, Node.JS / Express / MongoDB + VanillaJS frontend",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "run:frontend": "http-server ./frontend -o",
     "run:stub": "node ./data-stub/"
   },
