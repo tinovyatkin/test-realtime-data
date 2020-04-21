@@ -30,7 +30,8 @@ app.use(cors({ methods: "GET" }));
  */
 function onNewEntity(next) {
   const { operationType, fullDocument } = next;
-  console.log("%s of: %s", operationType, fullDocument.id);
+  if (!fullDocument) return;
+  console.log("[API] %s of: %s", operationType, fullDocument.id);
   const entity = [fullDocument.id, ...fullDocument.parameters];
   sse.send(entity, operationType);
 
@@ -85,16 +86,11 @@ async function initDB(
   sse.updateInit(entities.map(({ id, parameters }) => [id, ...parameters]));
 
   // subscribe to MongoDB change stream
-  const changeStream = db.collection(MONGO_COLLECTION_NAME).watch(
-    [
-      {
-        $match: {
-          operationType: { $in: ["insert", "update"] },
-        },
-      },
-    ],
-    { fullDocument: "updateLookup" }
-  );
+  const changeStream = db
+    .collection(MONGO_COLLECTION_NAME)
+    .watch([{ $match: { operationType: { $in: ["insert", "update"] } } }], {
+      fullDocument: "updateLookup",
+    });
   changeStream.on("change", onNewEntity);
 }
 

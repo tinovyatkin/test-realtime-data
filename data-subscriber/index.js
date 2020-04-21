@@ -71,7 +71,7 @@ async function onEntity(entity, serializedParameters, db) {
     .split(",")
     .map((n) => Number.parseFloat(n));
 
-  console.log("Received: %s -> %o", entity, parameters);
+  console.log("[FACTORY] Received entity: %s", entity);
 
   // store it to MongoDB, that will automatically verify by JSON schema
   // so, it may throw on broken data

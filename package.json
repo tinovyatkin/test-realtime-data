@@ -8,7 +8,9 @@
     "run:frontend": "http-server ./frontend -o",
     "run:stub": "node ./data-stub",
     "run:sub": "node ./data-subscriber",
-    "run:pub-sub": "run-p run:stub run:sub"
+    "run:api": "node ./data-server",
+    "run:pub-sub": "run-p run:stub run:sub",
+    "run:servers": "run-p run:stub run:sub run:api"
   },
   "repository": {
     "type": "git",

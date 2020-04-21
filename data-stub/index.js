@@ -41,7 +41,7 @@ async function fakeDataPublisher() {
     // publish it to redis
     await redis.publish(entity, parameters.map((p) => p.toFixed(4)).join(","));
 
-    console.log(entity, parameters);
+    console.log("[DATA] Published data: %s", entity);
     // wait from 100ms (~ 10 message per second up to 5 second - simulates server is not available)
     await new Promise((resolve) =>
       setTimeout(resolve, faker.random.number({ min: 100, max: 5000 }))
