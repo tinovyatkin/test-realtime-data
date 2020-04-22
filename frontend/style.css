@@ -64,16 +64,13 @@ body {
   background-color: rgba(var(--r), var(--g), var(--b), var(--a));
   transition: background-color 0.5s ease-in-out;
 
-  /* real background color, merged over white (255,255,255) background 
-    http://marcodiiga.github.io/rgba-to-rgb-conversion
-  */
+  /* real background color, merged over white (255,255,255) background */
   --r1: (1 - var(--a)) * 255 + var(--a) * var(--r);
   --g1: (1 - var(--a)) * 255 + var(--a) * var(--g);
   --b1: (1 - var(--a)) * 255 + var(--a) * var(--b);
 
   /* calculates perceived lightness using the sRGB Luma method 
   Luma = (red * 0.2126 + green * 0.7152 + blue * 0.0722) / 255 
-  https://css-tricks.com/switch-font-color-for-different-backgrounds-with-css/#article-header-id-7
   */
   --r2: calc(var(--r1) * 0.2126);
   --g2: calc(var(--g1) * 0.7152);
