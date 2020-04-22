@@ -10,7 +10,8 @@
     "run:sub": "node ./data-subscriber",
     "run:api": "node ./data-server",
     "run:pub-sub": "run-p run:stub run:sub",
-    "run:servers": "run-p run:pub-sub run:api"
+    "run:servers": "run-p run:pub-sub run:api",
+    "run:all": "run-p run:servers run:frontend"
   },
   "repository": {
     "type": "git",
