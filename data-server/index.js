@@ -18,10 +18,11 @@ const { MongoClient } = require("mongodb");
 const { MONGO_COLLECTION_NAME } = require("../constants");
 
 const app = express();
-const sse = new SSE();
+const sse = new SSE([], { isSerialized: false });
 
 // Set cors middlewares
 app.use(cors({ methods: "GET" }));
+app.options("*", cors());
 
 /**
  * MongoDB change stream handler that sends changes to all clients
@@ -30,7 +31,6 @@ app.use(cors({ methods: "GET" }));
  */
 function onNewEntity(next) {
   const { operationType, fullDocument } = next;
-  if (!fullDocument) return;
   console.log("[API] %s of: %s", operationType, fullDocument.id);
   const entity = [fullDocument.id, ...fullDocument.parameters];
   sse.send(entity, operationType);
@@ -127,9 +127,10 @@ async function start(PORT = parseInt(process.env.PORT || "3000", 10)) {
   await initDB();
 
   // start server
-  app.listen(PORT, () =>
-    console.log(`Data server is listening on port ${PORT}`)
-  );
+  app.listen(PORT, (err) => {
+    if (err) console.error(err);
+    else console.log(`Data server is listening on port ${PORT}`);
+  });
 }
 
 if (!module.parent) start();

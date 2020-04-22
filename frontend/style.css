@@ -1,0 +1,109 @@
+body {
+  box-sizing: border-box;
+  background: white;
+  color: black;
+  font-display: "swap";
+  font-family: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "Helvetica Neue", Arial, sans-serif;
+  font-weight: 300;
+  line-height: 1.6;
+  margin: 0;
+  padding: 10px;
+}
+
+/* fix width to prevent movement on updates */
+#entities {
+  table-layout: fixed;
+}
+#entities tbody [data-value],
+#entities tfoot th:not(:first-child) {
+  width: 6em;
+  font-family: monospace;
+  font-height: 1.8;
+  text-align: center;
+  overflow: hidden;
+}
+
+#entities thead {
+  border-bottom: double 6px;
+}
+
+#entities tfoot {
+  border-top: solid 4px;
+}
+
+#entities tbody td:first-child {
+  background: #d3d3d352;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* отрицательные значения  */
+#entities tbody [data-value^="-"] {
+  --r: 255;
+  --g: 140;
+  --b: 0;
+}
+
+/* положительные значения */
+#entities tbody :not([data-value^="-"]) {
+  --r: 0;
+  --g: 0;
+  --b: 0;
+}
+
+/* 0 */
+#entities tbody [data-value^="0.000"] {
+  --r: 255;
+  --g: 255;
+  --b: 255;
+}
+
+#entities tbody [data-value] {
+  background-color: rgba(var(--r), var(--g), var(--b), var(--a));
+  transition: background-color 0.5s ease-in-out;
+
+  /* real background color, merged over white (255,255,255) background 
+    http://marcodiiga.github.io/rgba-to-rgb-conversion
+  */
+  --r1: (1 - var(--a)) * 255 + var(--a) * var(--r);
+  --g1: (1 - var(--a)) * 255 + var(--a) * var(--g);
+  --b1: (1 - var(--a)) * 255 + var(--a) * var(--b);
+
+  /* calculates perceived lightness using the sRGB Luma method 
+  Luma = (red * 0.2126 + green * 0.7152 + blue * 0.0722) / 255 
+  https://css-tricks.com/switch-font-color-for-different-backgrounds-with-css/#article-header-id-7
+  */
+  --r2: calc(var(--r1) * 0.2126);
+  --g2: calc(var(--g1) * 0.7152);
+  --b2: calc(var(--b1) * 0.0722);
+  --sum: calc(var(--r2) + var(--g2) + var(--b2));
+  --perceived-lightness: calc(var(--sum) / 255);
+
+  /* the threshold at which colors are considered "light". 
+  Range: decimals from 0 to 1, recommended 0.5 - 0.6 */
+  --threshold: 0.75;
+
+  /* shows either white or black color depending on perceived darkness */
+  color: hsl(
+    0,
+    0%,
+    calc((var(--perceived-lightness) - var(--threshold)) * -10000000%)
+  );
+}
+
+#entities tfoot select {
+  appearance: none;
+  display: block;
+  -webkit-appearance: none;
+  border: none;
+  outline: none;
+  padding: 0 0;
+  margin: 0 auto;
+}
+
+#entities tfoot select:hover,
+#entities tfoot select:focus {
+  color: orange;
+}
