@@ -23,21 +23,39 @@ async function connectToMongo(
   const db = mongo.db();
 
   // TEST ONLY: we will cleanup collection on every restart
-  try {
-    await db.dropCollection(MONGO_COLLECTION_NAME);
-  } catch (err) {
-    if (err.codeName !== "NamespaceNotFound") {
-      throw err;
-    }
-  }
+  // try {
+  //   await db.dropCollection(MONGO_COLLECTION_NAME);
+  // } catch (err) {
+  //   if (err.codeName !== "NamespaceNotFound") {
+  //     throw err;
+  //   }
+  // }
 
-  // create collection and set JSON schema
-  await db.createCollection(MONGO_COLLECTION_NAME, {
-    validator: {
-      $jsonSchema: require("../schemas/mongo-entities.json"),
-    },
-    validationLevel: "strict",
-  });
+  // create or update collection and set JSON schema
+  const collections = await db
+    .listCollections({}, { nameOnly: true })
+    .toArray();
+  try {
+    if (!collections.find(({ name }) => name === MONGO_COLLECTION_NAME)) {
+      await db.createCollection(MONGO_COLLECTION_NAME, {
+        validator: {
+          $jsonSchema: require("../schemas/mongo-entities.json"),
+        },
+        validationLevel: "strict",
+      });
+    } else {
+      // OK, ensure it have JSON schema in place
+      await db.command({
+        collMod: MONGO_COLLECTION_NAME,
+        validator: {
+          $jsonSchema: require("../schemas/mongo-entities.json"),
+        },
+        validationLevel: "strict",
+      });
+    }
+  } catch (err) {
+    if (err.codeName !== "NamespaceExists") throw err;
+  }
 
   // Create id index, making review ID unique
   await db
