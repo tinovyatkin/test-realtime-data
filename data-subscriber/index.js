@@ -7,6 +7,7 @@
 "use strict";
 
 const Redis = require("ioredis");
+const RedisLock = require("ioredis-lock");
 const { MongoClient } = require("mongodb");
 
 const { MONGO_COLLECTION_NAME } = require("../constants");
@@ -73,9 +74,16 @@ async function subscribeToRedis(
   // Redis will automatically reconnect and resubscribe
   // so, no problem if external server goes down sometimes
   const redis = new Redis(url);
+  const lockConnection = redis.duplicate();
+  const lock = RedisLock.createLock(lockConnection, {
+    timeout: 20000,
+    retries: 3,
+    delay: 100,
+  });
+
   // subscribe to all entities
   await redis.psubscribe("*");
-  return redis;
+  return { redis, lock };
 }
 
 /**
@@ -105,18 +113,24 @@ async function onEntity(entity, serializedParameters, db) {
       { upsert: true }
     );
   } catch (err) {
-    console.error(err);
+    if (err.name !== "LockReleaseError") console.error(err);
   }
 }
 
 async function start() {
   const db = await connectToMongo();
-  const redis = await subscribeToRedis();
+  const { redis, lock } = await subscribeToRedis();
 
   // listen for events from Redis and store them in MongoDB
-  redis.on("pmessage", (pattern, entity, serializedParameters) =>
-    onEntity(entity, serializedParameters, db)
-  );
+  redis.on("pmessage", async (pattern, entity, serializedParameters) => {
+    try {
+      await lock.acquire(`lock:${entity}${serializedParameters}`);
+      await onEntity(entity, serializedParameters, db);
+      await lock.release();
+    } catch (err) {
+      console.error(err);
+    }
+  });
 }
 exports.start = start;
 
