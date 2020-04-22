@@ -2,7 +2,7 @@
  * Сервис который может отдать одну сущность или список всех сущностей в актуальном состоянии
  * (последнее состояние, полученное из внешнего источника)
  *
- * Сервис - это Express.JS сервер с тремя ендпоинтами:
+ * Сервис - это Express.JS сервер с тремя эндпоинтами:
  *  /entities - при конекте возвращает текущие данные по всем сущностям, и затем по SSE передает обновления
  * /entity/:id - возвращает текущие параметры для одной сущности
  * /status - возврящает количество клиентов слушающих SSE
@@ -15,7 +15,7 @@ const cors = require("cors");
 const SSE = require("express-sse");
 const { MongoClient } = require("mongodb");
 
-const { MONGO_COLLECTION_NAME } = require("../constants");
+const { MONGO_COLLECTION_NAME, ENTITIES_COUNT } = require("../constants");
 
 const app = express();
 const sse = new SSE([], { isSerialized: false });
@@ -73,6 +73,7 @@ async function initDB(
     .collection(MONGO_COLLECTION_NAME)
     .aggregate([
       { $match: {} },
+      { $limit: ENTITIES_COUNT },
       { $sort: { updatedAt: -1 } },
       {
         $project: {

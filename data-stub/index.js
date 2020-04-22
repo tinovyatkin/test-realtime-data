@@ -16,14 +16,17 @@
 const faker = require("faker");
 const Redis = require("ioredis");
 
+const { ENTITIES_COUNT, ENTITY_PARAMETERS_COUNT } = require("../constants");
+
 // generate our entities names, 20 as per task description
-const ENTITIES = (exports.ENTITIES = Array.from({ length: 20 }, () =>
-  faker.lorem.word()
+const ENTITIES = (exports.ENTITIES = Array.from(
+  { length: ENTITIES_COUNT },
+  () => faker.lorem.word()
 ));
 
 function generateRandomEntity() {
   const entity = faker.random.arrayElement(ENTITIES);
-  const parameters = Array.from({ length: 20 }, () =>
+  const parameters = Array.from({ length: ENTITY_PARAMETERS_COUNT }, () =>
     faker.random.number({ min: -1, max: 1, precision: 0.0001 })
   );
   return { entity, parameters };
