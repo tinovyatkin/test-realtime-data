@@ -67,7 +67,8 @@ async function connectToMongo(
 exports.connectToMongo = connectToMongo;
 
 async function subscribeToRedis(
-  url = process.env.REDIS_URL || "redis://localhost:6379"
+  url = process.env.REDIS_URL ||
+    "redis://h:xO6CWcLM8jbYTUsn5R1i5ScXHZruVRzE@redis-15123.c56.east-us.azure.cloud.redislabs.com:15123"
 ) {
   // Redis will automatically reconnect and resubscribe
   // so, no problem if external server goes down sometimes

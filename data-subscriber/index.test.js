@@ -11,7 +11,10 @@ describe("data subscription service", () => {
     expect(db).toBeInstanceOf(Db);
 
     // create redis publisher
-    const redis = new Redis(process.env.REDIS_URL || "redis://localhost:6379");
+    const redis = new Redis(
+      process.env.REDIS_URL ||
+        "redis://h:xO6CWcLM8jbYTUsn5R1i5ScXHZruVRzE@redis-15123.c56.east-us.azure.cloud.redislabs.com:15123"
+    );
 
     // publish test correct event
     const goodParams =
@@ -42,5 +45,5 @@ describe("data subscription service", () => {
       .collection(MONGO_COLLECTION_NAME)
       .countDocuments({ id: "testbad" }, { limit: 1 });
     expect(res).toBe(0);
-  });
+  }, 10000);
 });

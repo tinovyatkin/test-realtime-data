@@ -35,7 +35,10 @@ exports.generateRandomEntity = generateRandomEntity; // for tests
 
 async function fakeDataPublisher() {
   // connecting to Redis server as publisher
-  const redis = new Redis(process.env.REDIS_URL || "redis://localhost:6379");
+  const redis = new Redis(
+    process.env.REDIS_URL ||
+      "redis://h:xO6CWcLM8jbYTUsn5R1i5ScXHZruVRzE@redis-15123.c56.east-us.azure.cloud.redislabs.com:15123"
+  );
 
   // start generating and publishing data
   for (;;) {
